@@ -10,8 +10,6 @@ env/
 
 .env
 *.env
-.env.*
-!.env.example
 
 .vscode/
 .DS_Store

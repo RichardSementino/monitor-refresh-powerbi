@@ -188,7 +188,7 @@ class MonitorDadosEPTV:
 if __name__ == "__main__":
 
     # 🔐 Variáveis de ambiente (SEGURANÇA)
-    MINHA_CONEXAO = os.getenv("DefaultEndpointsProtocol=https;AccountName=stmonitoramentoestudante;AccountKey=D+ItZxi5Bcl7p3mTdERCLj0hlzLykqHpFHD7aGGAo03MivmldhcbSgbb95FKmT81E1WhiKDv+62i+ASthGr67Q==;EndpointSuffix=core.windows.net")
+    MINHA_CONEXAO = os.getenv("AZURE_BLOB_CONNECTION_STRING")
     T_ID = os.getenv("PBI_TENANT_ID")
     C_ID = os.getenv("PBI_CLIENT_ID")
     C_SECRET = os.getenv("PBI_CLIENT_SECRET")
