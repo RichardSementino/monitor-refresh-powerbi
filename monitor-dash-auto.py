@@ -211,7 +211,7 @@ if __name__ == "__main__":
 
     # Lista reduzida aqui só exemplo
     meus_relatorios = [
-        {"nome_excel": "Painel Compras", "w_id": "3ed8daac-5cc7-47f5-b4f3-adfe6deaacc7", "d_id": "071aa851-69b3-44d7-834d-e4ea20fdac71"},
+            {"nome_excel": "Painel Compras", "w_id": "3ed8daac-5cc7-47f5-b4f3-adfe6deaacc7", "d_id": "071aa851-69b3-44d7-834d-e4ea20fdac71"},
             {"nome_excel": "Painel Contratos", "w_id": "3ed8daac-5cc7-47f5-b4f3-adfe6deaacc7", "d_id": "11233c49-9845-466d-a562-5c3f35fbb585"},
             {"nome_excel": "Painel Painéis Rodoviários", "w_id": "3ed8daac-5cc7-47f5-b4f3-adfe6deaacc7", "d_id": "34bcbb02-0765-439c-ad3e-a2e5c0cfb15d"},
             {"nome_excel": "Performance Campanhas", "w_id": "e12eb10e-3ad3-4583-baa8-c1b72159e21c", "d_id": "81b9d7c4-fcc4-4338-9d87-71a610c22b55"},
@@ -249,9 +249,10 @@ if __name__ == "__main__":
             {"nome_excel": "Remuneração_BI", "w_id": "4963782d-ca3c-4507-9fc1-6cfe1216c285", "d_id": "3d844e4e-4c66-4a45-9183-b67603882932"},
             {"nome_excel": "Unidade_Eventos", "w_id": "bd03572a-f34d-4ff6-9bb4-541d4ab5118c", "d_id": "ab31655b-e522-44f8-9bde-ad3a818858a0"},
             {"nome_excel": "powerbi_relatorios", "w_id": "c8250554-3e79-46cd-a860-7005e77301b1", "d_id": "e5c6d480-715e-4297-bc50-a801748a3680"},
-            
+            {"nome_excel": "Energia_GrupoEP_V4", "w_id": "838a4381-6a88-4235-a361-df7349246528", "d_id": "ddc95106-8ab9-4384-87d0-61517299ee40"},
+            {"nome_excel": "Indicadores de Frotas_V4", "w_id": "838a4381-6a88-4235-a361-df7349246528", "d_id": "2fdf5b45-32a2-4b26-9d61-778620bae5c5"},
     ]
-        
+
     print(f"🚀 Iniciando monitoramento de {len(meus_relatorios)} relatórios...")
 
     # 🔥 CARREGA EXCEL UMA ÚNICA VEZ
