@@ -8,7 +8,7 @@ import requests
 from azure.storage.blob import BlobServiceClient
 from dotenv import load_dotenv
 
-load__dotenv()
+load_dotenv()
 
 
 # ==============================
@@ -87,17 +87,30 @@ class MonitorDadosEPTV:
         try:
             response = requests.get(url, headers=headers)
             if response.status_code != 200:
-                return "Erro", f"HTTP {response.status_code}: {response.text}"
+                return "Erro", f"HTTP {response.status_code}: {response.text}", None, None
 
             dados = response.json()
             if not dados.get("value"):
-                return "Erro", "Sem histórico de refresh."
+                return "Erro", "Sem histórico de refresh.", None, None
 
             ultimo = dados["value"][0]
             status = ultimo.get("status")
 
+            start = ultimo.get("startTime")
+            end = ultimo.get("endTime")
+            
+            refresh_time = end if end else start
+            
+            if refresh_time:
+                refresh_dt = datetime.fromisoformat(refresh_time.replace("Z", ""))
+                data_refresh = refresh_dt.strftime("%d/%m/%Y")
+                hora_refresh = refresh_dt.strftime("%H:%M")
+            else:
+                data_refresh = None
+                hora_refresh = None
+                
             if status == "Completed":
-                return "OK", None
+                return "OK", None, data_refresh, hora_refresh
 
             # Extrair detalhe
             detalhe = ultimo.get("serviceExceptionJson")
@@ -118,10 +131,10 @@ class MonitorDadosEPTV:
                 msg.append("Detalhe:")
                 msg.append(str(detalhe))
 
-            return "Erro", "\n".join(msg)
+            return "Erro", "\n".join(msg), data_refresh, hora_refresh
 
         except Exception as e:
-            return "Erro", f"Falha comunicação API: {e}"
+            return "Erro", f"Falha comunicação API: {e}", None, None
 
     # ==============================
     # ATUALIZA MONITORAMENTO
@@ -181,7 +194,17 @@ class MonitorDadosEPTV:
 
         print(f"🧾 Erro registrado para {painel}")
 
-
+    def atualizar_catalogo_reports(self, painel, data_refresh, hora_refresh):
+        ws_cat = self.wb["Catálogo_Reports"]
+        for r in range(4, ws_cat.max_row + 1):
+            nome_rel = ws_cat.cell(row=r, column=1).value
+            if nome_rel and str(nome_rel).strip() == painel:
+                
+                ws_cat.cell(row=r, column=5).value = data_refresh    
+                ws_cat.cell(row=r, column=6).value = hora_refresh
+                
+                print(f"📚 Catálogo atualizado → {painel}")
+                break
 # ==============================
 # MAIN
 # ==============================
@@ -216,6 +239,7 @@ if __name__ == "__main__":
             {"nome_excel": "Painel Painéis Rodoviários", "w_id": "3ed8daac-5cc7-47f5-b4f3-adfe6deaacc7", "d_id": "34bcbb02-0765-439c-ad3e-a2e5c0cfb15d"},
             {"nome_excel": "Performance Campanhas", "w_id": "e12eb10e-3ad3-4583-baa8-c1b72159e21c", "d_id": "81b9d7c4-fcc4-4338-9d87-71a610c22b55"},
             {"nome_excel": "acompanhamento_comercial", "w_id": "0b73efc3-c3cc-45f1-9240-519e55b13de5", "d_id": "1bc55ad3-6268-4ca8-9a65-43d645fde81f"},
+            {"nome_excel": "acompanhamento_crm_360", "w_id": "0b73efc3-c3cc-45f1-9240-519e55b13de5", "d_id": "5dd2ba6c-707e-4a9d-b6b4-7aeafb6ee19d"},
             {"nome_excel": "AdManager_Germanica", "w_id": "0b73efc3-c3cc-45f1-9240-519e55b13de5", "d_id": "1bccefed-e7ce-45db-8089-124815454cd5"},
             {"nome_excel": "atualizacao_tab_precos", "w_id": "0b73efc3-c3cc-45f1-9240-519e55b13de5", "d_id": "5d0a4ca1-1d64-495c-a74b-24006a7860ab"},
             {"nome_excel": "desempenho_comercial", "w_id": "0b73efc3-c3cc-45f1-9240-519e55b13de5", "d_id": "a123005d-d9d7-4b34-9a03-83844cdb488f"},
@@ -237,6 +261,7 @@ if __name__ == "__main__":
             {"nome_excel": "Sumario Executivo Verticais", "w_id": "fad50932-b25d-41c1-b165-1c1d0af6b5ad", "d_id": "9863ec0f-105e-4eff-8f0d-1ddba3e87070"},
             {"nome_excel": "CALENDARIOJORNALISMO", "w_id": "571a4a31-79dc-4124-91a1-4130706f9cc2", "d_id": "d6281474-49ba-4b09-a253-c13dbdf99158"},
             {"nome_excel": "painel_ga3_Esp_Publi", "w_id": "571a4a31-79dc-4124-91a1-4130706f9cc2", "d_id": "56cb2f15-6289-494e-a953-6c0c6a21c353"},
+            {"nome_excel": "Painel Estratégico de Publicações Comerciais", "w_id": "13087102-ad42-4b34-8c98-67d29e2c4751", "d_id": "d655619b-fc37-407a-8568-efe6174326d9"},
             {"nome_excel": "mensuração_mkt", "w_id": "35450d52-832b-4557-98f5-f2f88da17c40", "d_id": "59d5e2cb-c0ab-4659-a618-d61e37f1542e"},
             {"nome_excel": "Desempenho - Entretenimento", "w_id": "1abc4333-9f61-43db-8926-59ed05976d2a", "d_id": "aafdde78-e019-45a2-8d0a-9227db57575b"},
             {"nome_excel": "Desempenho - Jornalismo Local", "w_id": "1abc4333-9f61-43db-8926-59ed05976d2a", "d_id": "aafdde78-e019-45a2-8d0a-9227db57575b"},
@@ -251,6 +276,7 @@ if __name__ == "__main__":
             {"nome_excel": "powerbi_relatorios", "w_id": "c8250554-3e79-46cd-a860-7005e77301b1", "d_id": "e5c6d480-715e-4297-bc50-a801748a3680"},
             {"nome_excel": "Energia_GrupoEP_V4", "w_id": "838a4381-6a88-4235-a361-df7349246528", "d_id": "ddc95106-8ab9-4384-87d0-61517299ee40"},
             {"nome_excel": "Indicadores de Frotas_V4", "w_id": "838a4381-6a88-4235-a361-df7349246528", "d_id": "2fdf5b45-32a2-4b26-9d61-778620bae5c5"},
+            {"nome_excel": "Indicadores de Frotas - ok", "w_id": "838a4381-6a88-4235-a361-df7349246528", "d_id": "eec9cbea-13fe-42f1-8a32-009f59ce9bd6"}
     ]
 
     print(f"🚀 Iniciando monitoramento de {len(meus_relatorios)} relatórios...")
@@ -259,14 +285,21 @@ if __name__ == "__main__":
     estagio_robo.carregar_workbook()
 
     for item in meus_relatorios:
-        status, detalhe = estagio_robo.obter_status_e_detalhe(
+        status, detalhe, data_refresh, hora_refresh = estagio_robo.obter_status_e_detalhe(
             item["w_id"],
             item["d_id"],
             TOKEN
         )
+        
+        if data_refresh:
+            estagio_robo.atualizar_catalogo_reports(
+                item["nome_excel"],
+                data_refresh,
+                hora_refresh
+            )
 
         estagio_robo.atualizar_monitoramento(item["nome_excel"], status)
-
+        
         if status == "Erro":
             estagio_robo.registrar_erro_dashboard(item["nome_excel"], detalhe)
 
