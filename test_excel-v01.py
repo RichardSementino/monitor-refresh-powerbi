@@ -115,7 +115,7 @@ if __name__ == "__main__":
         "Painel Painéis Rodoviários",
         "Painel Compras",
         "Painel Contratos",
-        "Performance Campanhas",
+        "Performance Campanhas"
     ]
     
     # 2. LOOP AUTOMÁTICO

@@ -303,7 +303,7 @@ if __name__ == "__main__":
         if status == "Erro":
             estagio_robo.registrar_erro_dashboard(item["nome_excel"], detalhe)
 
-    # 🔥 SALVA UMA ÚNICA VEZ
+    #  SALVA UMA ÚNICA VEZ
     estagio_robo.salvar_workbook()
 
     print("🏁 Processo concluído com sucesso!")
